@@ -2,7 +2,7 @@
 
 /* CE1007/CZ1007 Data Structures
 Lab Test: Section A - Linked List Questions
-Purpose: Implementing the required functions for Question 1 */
+Purpose: Implementing the required functions for Question 7 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -11,28 +11,28 @@ Purpose: Implementing the required functions for Question 1 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
-typedef struct _listnode{
+typedef struct _listnode
+{
 	int item;
 	struct _listnode *next;
-} ListNode;			// You should not change the definition of ListNode
+} ListNode; // You should not change the definition of ListNode
 
-typedef struct _linkedlist{
+typedef struct _linkedlist
+{
 	int size;
 	ListNode *head;
-} LinkedList;			// You should not change the definition of LinkedList
+} LinkedList; // You should not change the definition of LinkedList
 
+//////////////////////// function prototypes /////////////////////////////////////
 
-///////////////////////// function prototypes ////////////////////////////////////
-
-//You should not change the prototype of this function
-int insertSortedLL(LinkedList *ll, int item);
+// You should not change the prototype of this function
+void RecursiveReverse(ListNode **ptrHead);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
 ListNode *findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
-
 
 //////////////////////////// main() //////////////////////////////////////////////
 
@@ -41,19 +41,17 @@ int main()
 	LinkedList ll;
 	int c, i, j;
 	c = 1;
-
-	//Initialize the linked list 1 as an empty linked list
+	// Initialize the linked list 1 as an empty linked list
 	ll.head = NULL;
 	ll.size = 0;
 
-	printf("1: Insert an integer to the sorted linked list:\n");
-	printf("2: Print the index of the most recent input value:\n");
-	printf("3: Print sorted linked list:\n");
-	printf("0: Quit:");
+	printf("1: Insert an integer to the linked list:\n");
+	printf("2: Reversed the linked list:\n");
+	printf("0: Quit:\n");
 
 	while (c != 0)
 	{
-		printf("\nPlease input your choice(1/2/3/0): ");
+		printf("Please input your choice(1/2/0): ");
 		scanf("%d", &c);
 
 		switch (c)
@@ -61,15 +59,13 @@ int main()
 		case 1:
 			printf("Input an integer that you want to add to the linked list: ");
 			scanf("%d", &i);
-			j = insertSortedLL(&ll, i);
+			j = insertNode(&ll, ll.size, i);
 			printf("The resulting linked list is: ");
 			printList(&ll);
 			break;
 		case 2:
-			printf("The value %d was added at index %d\n", i, j);
-			break;
-		case 3:
-			printf("The resulting sorted linked list is: ");
+			RecursiveReverse(&(ll.head)); // You need to code this function
+			printf("The resulting linked list after reversed the given linked list is: ");
 			printList(&ll);
 			removeAllItems(&ll);
 			break;
@@ -80,22 +76,68 @@ int main()
 			printf("Choice unknown;\n");
 			break;
 		}
-
-
 	}
 	return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
-int insertSortedLL(LinkedList *ll, int item)
+void RecursiveReverse(ListNode **ptrHead)
 {
 	/* add your code here */
+	ListNode *first, *rest;
+	first = *ptrHead;
+	if (first == NULL || first->next == NULL)
+		return;
+
+	rest = first->next;
+	RecursiveReverse(&rest);
+
+	// 내 다음 노드가 나를 가리키도록 한다.
+	first->next->next = first;
+
+	// 내가 가리키던 노드를 끊어준다.
+	first->next = NULL;
+
+	// head를 가리키는 포인터를 바꿔준다.
+	*ptrHead = rest;	
 }
 
-///////////////////////////////////////////////////////////////////////////////////
+/*
+TC1:
+1 1
+1 2
+1 3
+1 4
+1 5
+2 0
+\n
 
-void printList(LinkedList *ll){
+TC2:
+1 10
+1 9
+1 8
+1 7
+1 6
+1 1
+1 2
+1 3
+1 4
+1 5
+2 0
+\n
+
+TC3:
+1 1
+1 2
+2 0
+\n
+
+*/
+//////////////////////////////////////////////////////////////////////////////////
+
+void printList(LinkedList *ll)
+{
 
 	ListNode *cur;
 	if (ll == NULL)
@@ -112,23 +154,8 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-
-void removeAllItems(LinkedList *ll)
+ListNode *findNode(LinkedList *ll, int index)
 {
-	ListNode *cur = ll->head;
-	ListNode *tmp;
-
-	while (cur != NULL){
-		tmp = cur->next;
-		free(cur);
-		cur = tmp;
-	}
-	ll->head = NULL;
-	ll->size = 0;
-}
-
-
-ListNode *findNode(LinkedList *ll, int index){
 
 	ListNode *temp;
 
@@ -140,7 +167,8 @@ ListNode *findNode(LinkedList *ll, int index){
 	if (temp == NULL || index < 0)
 		return NULL;
 
-	while (index > 0){
+	while (index > 0)
+	{
 		temp = temp->next;
 		if (temp == NULL)
 			return NULL;
@@ -150,7 +178,8 @@ ListNode *findNode(LinkedList *ll, int index){
 	return temp;
 }
 
-int insertNode(LinkedList *ll, int index, int value){
+int insertNode(LinkedList *ll, int index, int value)
+{
 
 	ListNode *pre, *cur;
 
@@ -158,7 +187,8 @@ int insertNode(LinkedList *ll, int index, int value){
 		return -1;
 
 	// If empty list or inserting first node, need to update head pointer
-	if (ll->head == NULL || index == 0){
+	if (ll->head == NULL || index == 0)
+	{
 		cur = ll->head;
 		ll->head = malloc(sizeof(ListNode));
 		ll->head->item = value;
@@ -167,10 +197,10 @@ int insertNode(LinkedList *ll, int index, int value){
 		return 0;
 	}
 
-
 	// Find the nodes before and at the target position
 	// Create a new node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 		cur = pre->next;
 		pre->next = malloc(sizeof(ListNode));
 		pre->next->item = value;
@@ -182,8 +212,8 @@ int insertNode(LinkedList *ll, int index, int value){
 	return -1;
 }
 
-
-int removeNode(LinkedList *ll, int index){
+int removeNode(LinkedList *ll, int index)
+{
 
 	ListNode *pre, *cur;
 
@@ -192,7 +222,8 @@ int removeNode(LinkedList *ll, int index){
 		return -1;
 
 	// If removing first node, need to update head pointer
-	if (index == 0){
+	if (index == 0)
+	{
 		cur = ll->head->next;
 		free(ll->head);
 		ll->head = cur;
@@ -203,7 +234,8 @@ int removeNode(LinkedList *ll, int index){
 
 	// Find the nodes before and after the target position
 	// Free the target node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 
 		if (pre->next == NULL)
 			return -1;
@@ -216,4 +248,19 @@ int removeNode(LinkedList *ll, int index){
 	}
 
 	return -1;
+}
+
+void removeAllItems(LinkedList *ll)
+{
+	ListNode *cur = ll->head;
+	ListNode *tmp;
+
+	while (cur != NULL)
+	{
+		tmp = cur->next;
+		free(cur);
+		cur = tmp;
+	}
+	ll->head = NULL;
+	ll->size = 0;
 }

@@ -2,7 +2,7 @@
 
 /* CE1007/CZ1007 Data Structures
 Lab Test: Section A - Linked List Questions
-Purpose: Implementing the required functions for Question 7 */
+Purpose: Implementing the required functions for Question 2 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -27,11 +27,11 @@ typedef struct _linkedlist
 //////////////////////// function prototypes /////////////////////////////////////
 
 // You should not change the prototype of this function
-void RecursiveReverse(ListNode **ptrHead);
+void alternateMergeLinkedList(LinkedList *ll1, LinkedList *ll2);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
-ListNode * findNode(LinkedList *ll, int index);
+ListNode *findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
 
@@ -40,40 +40,56 @@ int removeNode(LinkedList *ll, int index);
 
 int main()
 {
-	LinkedList ll;
+	LinkedList ll1, ll2;
 	int c, i, j;
 	c = 1;
 	//Initialize the linked list 1 as an empty linked list
-	ll.head = NULL;
-	ll.size = 0;
+	ll1.head = NULL;
+	ll1.size = 0;
 
+	//Initialize the linked list 2 as an empty linked list
+	ll2.head = NULL;
+	ll2.size = 0;
 
-	printf("1: Insert an integer to the linked list:\n");
-	printf("2: Reversed the linked list:\n");
+	printf("1: Insert an integer to the linked list 1:\n");
+	printf("2: Insert an integer to the linked list 2:\n");
+	printf("3: Create the alternate merged linked list:\n");
 	printf("0: Quit:\n");
 
 	while (c != 0)
 	{
-		printf("Please input your choice(1/2/0): ");
+		printf("Please input your choice(1/2/3/0): ");
 		scanf("%d", &c);
 
 		switch (c)
 		{
 		case 1:
-			printf("Input an integer that you want to add to the linked list: ");
+			printf("Input an integer that you want to add to the linked list 1: ");
 			scanf("%d", &i);
-			j = insertNode(&ll, ll.size, i);
-			printf("The resulting linked list is: ");
-			printList(&ll);
+			j = insertNode(&ll1, ll1.size, i);
+			printf("Linked list 1: ");
+			printList(&ll1);
 			break;
 		case 2:
-			RecursiveReverse(&(ll.head)); // You need to code this function
-			printf("The resulting linked list after reversed the given linked list is: ");
-			printList(&ll);
-			removeAllItems(&ll);
+			printf("Input an integer that you want to add to the linked list 2: ");
+			scanf("%d", &i);
+			j = insertNode(&ll2, ll2.size, i);
+			printf("Linked list 2: ");
+			printList(&ll2);
+			break;
+		case 3:
+		    printf("The resulting linked lists after merging the given linked list are:\n");
+			alternateMergeLinkedList(&ll1, &ll2); // You need to code this function
+			printf("The resulting linked list 1: ");
+			printList(&ll1);
+			printf("The resulting linked list 2: ");
+			printList(&ll2);
+			removeAllItems(&ll1);
+			removeAllItems(&ll2);
 			break;
 		case 0:
-			removeAllItems(&ll);
+			removeAllItems(&ll1);
+			removeAllItems(&ll2);
 			break;
 		default:
 			printf("Choice unknown;\n");
@@ -83,14 +99,35 @@ int main()
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
-void RecursiveReverse(ListNode **ptrHead)
+void alternateMergeLinkedList(LinkedList *ll1, LinkedList *ll2)
 {
-	/* add your code here */
+    /* add your code here */
+	int insert_idx = 1;
+	int num = ll1->size;
+	while (ll2->head != NULL && insert_idx < num * 2) {
+		insertNode(ll1, insert_idx, ll2->head->item);
+		removeNode(ll2, 0);
+		insert_idx += 2;
+	}
+/*
+TC1:
+1 1 1 2 1 3 2 4
+2 5 2 6 2 7
+3 0
+\n
+
+TC2:
+1 1 1 5 1 7 1 3 1 9 1 11
+2 6 2 10 2 2 2 4
+3 0
+\n
+
+*/
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
 void printList(LinkedList *ll){
 
@@ -109,7 +146,23 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-ListNode * findNode(LinkedList *ll, int index){
+
+void removeAllItems(LinkedList *ll)
+{
+	ListNode *cur = ll->head;
+	ListNode *tmp;
+
+	while (cur != NULL){
+		tmp = cur->next;
+		free(cur);
+		cur = tmp;
+	}
+	ll->head = NULL;
+	ll->size = 0;
+}
+
+
+ListNode *findNode(LinkedList *ll, int index){
 
 	ListNode *temp;
 
@@ -197,18 +250,4 @@ int removeNode(LinkedList *ll, int index){
 	}
 
 	return -1;
-}
-
-void removeAllItems(LinkedList *ll)
-{
-	ListNode *cur = ll->head;
-	ListNode *tmp;
-
-	while (cur != NULL){
-		tmp = cur->next;
-		free(cur);
-		cur = tmp;
-	}
-	ll->head = NULL;
-	ll->size = 0;
 }
