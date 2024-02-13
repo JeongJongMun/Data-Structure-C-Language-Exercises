@@ -105,8 +105,8 @@ int balanced(char *expression)
 	Stack s;
 	s.ll.head = NULL;
 	s.ll.size = 0;
-	int i = 0;
 	
+	int i = 0;
 	// ASCII of expressions: 40 41 91 93 123 125
 	while (expression[i])
 	{
