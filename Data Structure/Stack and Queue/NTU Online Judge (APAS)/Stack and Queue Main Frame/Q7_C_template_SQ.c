@@ -122,18 +122,21 @@ int balanced(char *expression)
 	else
 		return 1;
 }
+
 /*
 TC1:
 1
 {[]()[]}
 2 0
 \n
+ANS: balanced!
 
 TC2:
 1
 {{)]
 2 0
 \n
+ANS: not balanced!
 
 TC3:
 1
