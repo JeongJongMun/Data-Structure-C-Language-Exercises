@@ -92,15 +92,12 @@ void RecursiveReverse(ListNode **ptrHead)
 
 	rest = first->next;
 	RecursiveReverse(&rest);
-
 	// 내 다음 노드가 나를 가리키도록 한다.
 	first->next->next = first;
-
 	// 내가 가리키던 노드를 끊어준다.
 	first->next = NULL;
-
-	// head를 가리키는 포인터를 바꿔준다.
-	*ptrHead = rest;	
+	// head를 가리키는 포인터를 바꿔준다. 
+	*ptrHead = rest;
 }
 
 /*
